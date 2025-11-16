@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartMail Automation - Enhanced Dashboard</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        .btn {
+            background: #4285f4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+            transition: background 0.3s;
+        }
+        
+        .btn:hover {
+            background: #3367d6;
+        }
+        
+        .btn.success {
+            background: #34a853;
+        }
+        
+        .btn.success:hover {
+            background: #2d8e47;
+        }
+        
+        .btn.warning {
+            background: #fbbc04;
+            color: #000;
+        }
+        
+        .btn.warning:hover {
+            background: #f9ab00;
+        }
+        
+        .btn.danger {
+            background: #ea4335;
+        }
+        
+        .btn.danger:hover {
+            background: #d23321;
+        }
+        
+        .status {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .status.success {
+            background: #e8f5e8;
+            color: #2e7d32;
+            border: 1px solid #4caf50;
+        }
+        
+        .status.error {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #f44336;
+        }
+        
+        .status.info {
+            background: #e3f2fd;
+            color: #1565c0;
+            border: 1px solid #2196f3;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .stat-card h3 {
+            margin: 0 0 10px 0;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .stat-card p {
+            margin: 0;
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #fafafa;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .section h2 {
+            margin-top: 0;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .batch-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .batch-item {
+            padding: 15px;
+            background: white;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        
+        .batch-item h4 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        
+        .batch-item p {
+            margin: 0 0 15px 0;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: #4285f4;
+            transition: width 0.3s;
+        }
+        
+        .batch-history {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .batch-item-history {
+            padding: 10px;
+            margin: 5px 0;
+            background: white;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+        }
+        
+        .batch-item-history.completed {
+            border-left: 4px solid #34a853;
+        }
+        
+        .batch-item-history.failed {
+            border-left: 4px solid #ea4335;
+        }
+        
+        .batch-item-history.running {
+            border-left: 4px solid #fbbc04;
+        }
+        
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .category-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .category-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .suggestions {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        .suggestions h4 {
+            margin: 0 0 10px 0;
+            color: #856404;
+        }
+        
+        .suggestions ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        .suggestions li {
+            margin: 5px 0;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 SmartMail Automation</h1>
+            <div>
+                <span id="userInfo">Loading...</span>
+                <button class="btn" onclick="logout()">Logout</button>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>📧 Total Emails</h3>
+                <p id="totalEmails">-</p>
+            </div>
+            <div class="stat-card">
+                <h3>🧠 Processed</h3>
+                <p id="processedEmails">-</p>
+            </div>
+            <div class="stat-card">
+                <h3>🏷️ Labels</h3>
+                <p id="totalLabels">-</p>
+            </div>
+            <div class="stat-card">
+                <h3>📊 Categories</h3>
+                <p id="totalCategories">-</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🚀 Batch Operations</h2>
+            <div class="batch-controls">
+                <div class="batch-item">
+                    <h4>📬 Fetch Emails</h4>
+                    <p>Fetch recent emails from Gmail and store in database</p>
+                    <input type="number" id="fetchBatchSize" value="100" min="10" max="500" style="width: 80px; margin-right: 10px;">
+                    <button class="btn" onclick="startBatch('fetchEmails')">Start Fetch</button>
+                </div>
+                
+                <div class="batch-item">
+                    <h4>🧠 Analyze Emails</h4>
+                    <p>Analyze emails using Gemini AI to extract insights</p>
+                    <input type="number" id="analyzeBatchSize" value="50" min="10" max="200" style="width: 80px; margin-right: 10px;">
+                    <button class="btn" onclick="startBatch('analyzeEmails')">Start Analysis</button>
+                </div>
+                
+                <div class="batch-item">
+                    <h4>🏷️ Create Labels</h4>
+                    <p>Create Gmail labels based on email analysis</p>
+                    <button class="btn success" onclick="startBatch('createLabels')">Create Labels</button>
+                </div>
+                
+                <div class="batch-item">
+                    <h4>📮 Assign Labels</h4>
+                    <p>Assign labels to emails in Gmail</p>
+                    <input type="number" id="assignBatchSize" value="50" min="10" max="200" style="width: 80px; margin-right: 10px;">
+                    <button class="btn success" onclick="startBatch('assignLabels')">Assign Labels</button>
+                </div>
+                
+                <div class="batch-item">
+                    <h4>🗂️ Organize Labels</h4>
+                    <p>Get AI suggestions for better label organization</p>
+                    <button class="btn warning" onclick="startBatch('organizeLabels')">Get Suggestions</button>
+                </div>
+                
+                <div class="batch-item">
+                    <h4>🔄 Full Process</h4>
+                    <p>Complete workflow: fetch → analyze → create → assign</p>
+                    <input type="number" id="fullBatchSize" value="100" min="10" max="200" style="width: 80px; margin-right: 10px;">
+                    <button class="btn danger" onclick="startBatch('fullProcess')">Start Full Process</button>
+                </div>
+            </div>
+            
+            <div id="batchProgress" style="display: none;">
+                <h4>📊 Batch Progress</h4>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                </div>
+                <div id="progressText">Starting...</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📊 Analytics & Insights</h2>
+            <div class="analytics-grid">
+                <div>
+                    <h4>📈 Category Breakdown</h4>
+                    <ul class="category-list" id="categoryList">
+                        <li>Loading...</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>💡 Label Organization Suggestions</h4>
+                    <div id="suggestions">
+                        <button class="btn" onclick="loadSuggestions()">Get Suggestions</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📜 Batch History</h2>
+            <div class="batch-history" id="batchHistory">
+                <p>Loading batch history...</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🏷️ Label Management</h2>
+            <button class="btn" onclick="fetchLabels()">📋 Fetch Current Labels</button>
+            <button class="btn success" onclick="showLabelSelector()">📧 View Emails by Label</button>
+            <div id="labelContent" style="margin-top: 15px;"></div>
+        </div>
+
+        <div id="status" class="status"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://127.0.0.1:3000';
+        let currentBatchId = null;
+        let batchStatusInterval = null;
+
+        // Initialize on page load
+        window.onload = () => {
+            checkAuth();
+            loadAnalytics();
+            loadBatchHistory();
+        };
+
+        async function checkAuth() {
+            try {
+                const response = await fetch(`${API_BASE}/auth/check`, { credentials: 'include' });
+                const data = await response.json();
+                
+                if (data.authenticated) {
+                    document.getElementById('userInfo').textContent = `👤 ${data.user.displayName}`;
+                } else {
+                    window.location.href = '/login';
+                }
+            } catch (error) {
+                console.error('Auth check failed:', error);
+                window.location.href = '/login';
+            }
+        }
+
+        async function startBatch(operation) {
+            try {
+                let batchSize = 50;
+                
+                // Get batch size based on operation
+                switch(operation) {
+                    case 'fetchEmails':
+                        batchSize = parseInt(document.getElementById('fetchBatchSize').value);
+                        break;
+                    case 'analyzeEmails':
+                        batchSize = parseInt(document.getElementById('analyzeBatchSize').value);
+                        break;
+                    case 'assignLabels':
+                        batchSize = parseInt(document.getElementById('assignBatchSize').value);
+                        break;
+                    case 'fullProcess':
+                        batchSize = parseInt(document.getElementById('fullBatchSize').value);
+                        break;
+                }
+                
+                showStatus(`🚀 Starting ${operation}...`, 'info');
+                
+                // Create batch
+                const createResponse = await fetch(`${API_BASE}/api/batch/create`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        operation: operation,
+                        options: { batchSize: batchSize }
+                    })
+                });
+                
+                const createResult = await createResponse.json();
+                
+                if (createResult.success) {
+                    currentBatchId = createResult.batchId;
+                    showStatus(`📝 Batch ${currentBatchId} created. Executing...`, 'info');
+                    
+                    // Execute batch
+                    const executeResponse = await fetch(`${API_BASE}/api/batch/execute`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify({ batchId: currentBatchId })
+                    });
+                    
+                    const executeResult = await executeResponse.json();
+                    
+                    if (executeResult.success) {
+                        showStatus(`✅ Batch ${currentBatchId} completed successfully!`, 'success');
+                        await loadAnalytics();
+                        await loadBatchHistory();
+                    } else {
+                        showStatus(`❌ Batch failed: ${executeResult.error}`, 'error');
+                    }
+                    
+                    currentBatchId = null;
+                } else {
+                    showStatus(`❌ Failed to create batch: ${createResult.error}`, 'error');
+                }
+                
+            } catch (error) {
+                console.error('Batch operation failed:', error);
+                showStatus(`❌ Batch operation failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function loadAnalytics() {
+            try {
+                const response = await fetch(`${API_BASE}/api/analytics/overview`, {
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                
+                // Update stats
+                document.getElementById('totalEmails').textContent = data.emailStats.totalEmails || 0;
+                document.getElementById('processedEmails').textContent = data.emailStats.processedEmails || 0;
+                document.getElementById('totalLabels').textContent = data.totalLabels || 0;
+                document.getElementById('totalCategories').textContent = data.categoryBreakdown.length || 0;
+                
+                // Update category list
+                const categoryList = document.getElementById('categoryList');
+                categoryList.innerHTML = '';
+                
+                if (data.categoryBreakdown.length === 0) {
+                    categoryList.innerHTML = '<li>No categories found</li>';
+                } else {
+                    data.categoryBreakdown.forEach(category => {
+                        const li = document.createElement('li');
+                        li.className = 'category-item';
+                        li.innerHTML = `
+                            <span>${category._id}</span>
+                            <span><strong>${category.count}</strong> emails</span>
+                        `;
+                        categoryList.appendChild(li);
+                    });
+                }
+                
+            } catch (error) {
+                console.error('Failed to load analytics:', error);
+            }
+        }
+
+        async function loadBatchHistory() {
+            try {
+                const response = await fetch(`${API_BASE}/api/batch/history`, {
+                    credentials: 'include'
+                });
+                
+                const history = await response.json();
+                
+                const historyDiv = document.getElementById('batchHistory');
+                historyDiv.innerHTML = '';
+                
+                if (history.length === 0) {
+                    historyDiv.innerHTML = '<p>No batch operations found</p>';
+                } else {
+                    history.forEach(batch => {
+                        const batchDiv = document.createElement('div');
+                        batchDiv.className = `batch-item-history ${batch.status}`;
+                        
+                        const duration = batch.endTime && batch.startTime 
+                            ? Math.round((new Date(batch.endTime) - new Date(batch.startTime)) / 1000)
+                            : 0;
+                        
+                        batchDiv.innerHTML = `
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <strong>${batch.operation}</strong> - ${batch.batchId}
+                                    <br><small>${new Date(batch.startTime).toLocaleString()}</small>
+                                </div>
+                                <div style="text-align: right;">
+                                    <strong>Status:</strong> ${batch.status}
+                                    ${duration > 0 ? `<br><small>${duration}s</small>` : ''}
+                                </div>
+                            </div>
+                            ${batch.emailsProcessed > 0 ? `
+                                <div style="margin-top: 8px; font-size: 12px; color: #666;">
+                                    📧 ${batch.emailsProcessed}/${batch.emailsTotal} emails
+                                    ${batch.labelsCreated > 0 ? `| 🏷️ ${batch.labelsCreated} labels created` : ''}
+                                </div>
+                            ` : ''}
+                        `;
+                        
+                        historyDiv.appendChild(batchDiv);
+                    });
+                }
+                
+            } catch (error) {
+                console.error('Failed to load batch history:', error);
+            }
+        }
+
+        async function loadSuggestions() {
+            try {
+                showStatus('💡 Generating label organization suggestions...', 'info');
+                
+                const response = await fetch(`${API_BASE}/api/analytics/suggestions`, {
+                    credentials: 'include'
+                });
+                
+                const suggestions = await response.json();
+                
+                const suggestionsDiv = document.getElementById('suggestions');
+                
+                if (suggestions.mergeSuggestions.length === 0 && 
+                    suggestions.renameSuggestions.length === 0 && 
+                    suggestions.newLabels.length === 0) {
+                    suggestionsDiv.innerHTML = '<p>No suggestions available at this time.</p>';
+                } else {
+                    let html = '<div class="suggestions">';
+                    
+                    if (suggestions.mergeSuggestions.length > 0) {
+                        html += '<h4>🔄 Merge Suggestions</h4><ul>';
+                        suggestions.mergeSuggestions.forEach(suggestion => {
+                            html += `<li>Merge "${suggestion.oldLabel}" → "${suggestion.newLabel}": ${suggestion.reason}</li>`;
+                        });
+                        html += '</ul>';
+                    }
+                    
+                    if (suggestions.renameSuggestions.length > 0) {
+                        html += '<h4>✏️ Rename Suggestions</h4><ul>';
+                        suggestions.renameSuggestions.forEach(suggestion => {
+                            html += `<li>Rename "${suggestion.oldName}" → "${suggestion.newName}": ${suggestion.reason}</li>`;
+                        });
+                        html += '</ul>';
+                    }
+                    
+                    if (suggestions.newLabels.length > 0) {
+                        html += '<h4>➕ New Label Suggestions</h4><ul>';
+                        suggestions.newLabels.forEach(suggestion => {
+                            html += `<li>Create "${suggestion.name}": ${suggestion.purpose} (~${suggestion.estimatedEmails} emails)</li>`;
+                        });
+                        html += '</ul>';
+                    }
+                    
+                    html += '</div>';
+                    suggestionsDiv.innerHTML = html;
+                }
+                
+                showStatus('✅ Suggestions loaded successfully', 'success');
+                
+            } catch (error) {
+                console.error('Failed to load suggestions:', error);
+                showStatus('❌ Failed to load suggestions', 'error');
+            }
+        }
+
+        async function fetchLabels() {
+            try {
+                showStatus('🏷️ Fetching Gmail labels...', 'info');
+                
+                const response = await fetch(`${API_BASE}/api/labels`, {
+                    credentials: 'include'
+                });
+                
+                const labels = await response.json();
+                
+                const labelContent = document.getElementById('labelContent');
+                labelContent.innerHTML = `
+                    <h4>📋 Your Gmail Labels (${labels.length})</h4>
+                    <div style="max-height: 200px; overflow-y: auto; background: white; padding: 10px; border-radius: 5px; border: 1px solid #ddd;">
+                        ${labels.map(label => `<div style="padding: 5px 0;">🏷️ ${label.name}</div>`).join('')}
+                    </div>
+                `;
+                
+                showStatus(`✅ Found ${labels.length} labels`, 'success');
+                
+            } catch (error) {
+                console.error('Failed to fetch labels:', error);
+                showStatus('❌ Failed to fetch labels', 'error');
+            }
+        }
+
+        function showLabelSelector() {
+            const labelName = prompt('Enter label name to view emails:');
+            if (labelName) {
+                viewEmailsByLabel(labelName);
+            }
+        }
+
+        async function viewEmailsByLabel(labelName) {
+            try {
+                showStatus(`📧 Fetching emails for label "${labelName}"...`, 'info');
+                
+                const response = await fetch(`${API_BASE}/api/labels/emails/${encodeURIComponent(labelName)}`, {
+                    credentials: 'include'
+                });
+                
+                const emails = await response.json();
+                
+                const labelContent = document.getElementById('labelContent');
+                
+                if (emails.length === 0) {
+                    labelContent.innerHTML = `<p>No emails found for label "${labelName}"</p>`;
+                } else {
+                    let html = `<h4>📧 Emails in "${labelName}" (${emails.length})</h4>`;
+                    html += '<div style="max-height: 300px; overflow-y: auto; background: white; padding: 10px; border-radius: 5px; border: 1px solid #ddd;">';
+                    
+                    emails.forEach(email => {
+                        html += `
+                            <div style="padding: 10px 0; border-bottom: 1px solid #eee;">
+                                <div><strong>${email.subject}</strong></div>
+                                <div style="font-size: 12px; color: #666;">From: ${email.from}</div>
+                                <div style="font-size: 12px; color: #666;">Date: ${new Date(email.date).toLocaleDateString()}</div>
+                            </div>
+                        `;
+                    });
+                    
+                    html += '</div>';
+                    labelContent.innerHTML = html;
+                }
+                
+                showStatus(`✅ Found ${emails.length} emails in "${labelName}"`, 'success');
+                
+            } catch (error) {
+                console.error('Failed to fetch label emails:', error);
+                showStatus('❌ Failed to fetch label emails', 'error');
+            }
+        }
+
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+            status.style.display = 'block';
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                status.style.display = 'none';
+            }, 5000);
+        }
+
+        function logout() {
+            window.location.href = `${API_BASE}/auth/logout`;
+        }
+    </script>
+</body>
+</html>

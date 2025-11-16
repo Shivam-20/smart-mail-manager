@@ -1,39 +1,39 @@
 # Node
 node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+package-lock.json
+yarn.lock
 
 # Environment files
 .env
 .env.local
 .env.*.local
 
-# Operating system
-.DS_Store
+# Keep sample env
+!.env.example
 
 # Logs
 logs
 *.log
 server.log
 
-# Database files
+# Databases
 smartmail.db
 smartmail.db-journal
 
-# Build artifacts
+# Build
 dist/
 build/
-
-# IDEs
-.vscode/
-.idea/
+out/
 
 # Frontend
 /frontend/node_modules/
 /frontend/dist/
 
-# Client secrets (do NOT commit)
+# IDEs
+.vscode/
+.idea/
+
+# Client secrets
 client_secret_*.json
 
 # Temporary files
@@ -44,12 +44,16 @@ temp/
 # Coverage
 coverage/
 
-# Mac
-*.DS_Store
-
-# Others
-.env.example
+# System files
+.DS_Store
+Thumbs.db
 
 # Debug
-npm-debug.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local development artifacts
+.next/
+.vercel/
 

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartMail AI - Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .btn {
+            background: #4285f4;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+        }
+        .btn:hover {
+            background: #357ae8;
+        }
+        .status {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .success {
+            background: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        .email-item {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            background: #fafafa;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 SmartMail AI</h1>
+            <p>Gmail Automation with Email Categorization</p>
+        </div>
+
+        <div id="authSection">
+            <button class="btn" onclick="signIn()">🔐 Sign in with Google</button>
+            <button class="btn" onclick="checkAuthStatus()">📊 Check Auth Status</button>
+        </div>
+
+        <div id="status" class="status hidden"></div>
+
+        <div id="emailSection" class="hidden">
+            <h3>📧 Your Recent Emails</h3>
+            <button class="btn" onclick="fetchEmails()">📬 Fetch Emails</button>
+            <button class="btn" onclick="fetchLabels()">🏷️ Fetch Labels</button>
+            <button class="btn" onclick="createTestLabel()">➕ Create Test Label</button>
+            <div id="emailList"></div>
+            <div id="labelList"></div>
+        </div>
+
+        <div id="testSection" class="hidden">
+            <h3>🧪 Test Functions</h3>
+            <button class="btn" onclick="testCategorization()">🤖 Test Categorization</button>
+            <button class="btn" onclick="logout()">🚪 Logout</button>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://127.0.0.1:3000';
+
+        function showStatus(message, type = 'success') {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+            status.classList.remove('hidden');
+            setTimeout(() => status.classList.add('hidden'), 5000);
+        }
+
+        function signIn() {
+            window.location.href = `${API_BASE}/auth/google`;
+        }
+
+        function logout() {
+            window.location.href = `${API_BASE}/auth/logout`;
+        }
+
+        async function checkAuthStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/auth/status`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                
+                if (data.authenticated) {
+                    showStatus(`✅ Authenticated as: ${data.user.displayName || data.user.email}`, 'success');
+                    document.getElementById('emailSection').classList.remove('hidden');
+                    document.getElementById('testSection').classList.remove('hidden');
+                } else {
+                    showStatus('❌ Not authenticated', 'error');
+                }
+            } catch (error) {
+                showStatus(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function fetchEmails() {
+            try {
+                const response = await fetch(`${API_BASE}/api/emails`, {
+                    credentials: 'include'
+                });
+                const emails = await response.json();
+                
+                const emailList = document.getElementById('emailList');
+                emailList.innerHTML = '<h4>📧 Recent Emails:</h4>';
+                
+                emails.forEach(email => {
+                    const subject = email.payload.headers.find(h => h.name === 'Subject')?.value || 'No Subject';
+                    const from = email.payload.headers.find(h => h.name === 'From')?.value || 'Unknown';
+                    const date = email.payload.headers.find(h => h.name === 'Date')?.value || '';
+                    
+                    const emailDiv = document.createElement('div');
+                    emailDiv.className = 'email-item';
+                    emailDiv.innerHTML = `
+                        <strong>Subject:</strong> ${subject}<br>
+                        <strong>From:</strong> ${from}<br>
+                        <strong>Date:</strong> ${new Date(date).toLocaleDateString()}<br>
+                        <button class="btn" onclick="categorizeEmail('${email.id}', '${subject}', '${from}')">🤖 Categorize</button>
+                    `;
+                    emailList.appendChild(emailDiv);
+                });
+                
+                showStatus(`✅ Fetched ${emails.length} emails`, 'success');
+            } catch (error) {
+                showStatus(`❌ Error fetching emails: ${error.message}`, 'error');
+            }
+        }
+
+        async function fetchLabels() {
+            try {
+                const response = await fetch(`${API_BASE}/api/labels`, {
+                    credentials: 'include'
+                });
+                const labels = await response.json();
+                
+                const labelList = document.getElementById('labelList');
+                labelList.innerHTML = '<h4>🏷️ Your Labels:</h4>';
+                
+                labels.forEach(label => {
+                    const labelDiv = document.createElement('div');
+                    labelDiv.className = 'email-item';
+                    labelDiv.innerHTML = `
+                        <strong>Name:</strong> ${label.name}<br>
+                        <strong>ID:</strong> ${label.id}<br>
+                        <strong>Type:</strong> ${label.type}
+                    `;
+                    labelList.appendChild(labelDiv);
+                });
+                
+                showStatus(`✅ Fetched ${labels.length} labels`, 'success');
+            } catch (error) {
+                showStatus(`❌ Error fetching labels: ${error.message}`, 'error');
+            }
+        }
+
+        async function createTestLabel() {
+            const labelName = prompt('Enter label name:');
+            if (!labelName) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/labels`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({ name: labelName })
+                });
+                
+                if (response.ok) {
+                    showStatus(`✅ Created label: ${labelName}`, 'success');
+                    fetchLabels();
+                } else {
+                    throw new Error('Failed to create label');
+                }
+            } catch (error) {
+                showStatus(`❌ Error creating label: ${error.message}`, 'error');
+            }
+        }
+
+        async function categorizeEmail(emailId, subject, from) {
+            try {
+                const response = await fetch(`${API_BASE}/api/categorize-email`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({ emailId, subject, from })
+                });
+                
+                const result = await response.json();
+                showStatus(`🤖 Categorized as: ${result.category}`, 'success');
+            } catch (error) {
+                showStatus(`❌ Error categorizing email: ${error.message}`, 'error');
+            }
+        }
+
+        async function testCategorization() {
+            try {
+                const response = await fetch(`${API_BASE}/api/categorize-email`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({ 
+                        subject: 'Meeting tomorrow at 3 PM', 
+                        from: 'company@example.com' 
+                    })
+                });
+                
+                const result = await response.json();
+                showStatus(`🧪 Test categorization result: ${result.category}`, 'success');
+            } catch (error) {
+                showStatus(`❌ Error in test: ${error.message}`, 'error');
+            }
+        }
+
+        // Check auth status on page load
+        window.onload = () => {
+            checkAuthStatus();
+        };
+    </script>
+</body>
+</html>
