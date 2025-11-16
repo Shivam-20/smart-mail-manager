@@ -1,0 +1,55 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Operating system
+.DS_Store
+
+# Logs
+logs
+*.log
+server.log
+
+# Database files
+smartmail.db
+smartmail.db-journal
+
+# Build artifacts
+dist/
+build/
+
+# IDEs
+.vscode/
+.idea/
+
+# Frontend
+/frontend/node_modules/
+/frontend/dist/
+
+# Client secrets (do NOT commit)
+client_secret_*.json
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Coverage
+coverage/
+
+# Mac
+*.DS_Store
+
+# Others
+.env.example
+
+# Debug
+npm-debug.log
+
