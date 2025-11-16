@@ -150,6 +150,20 @@ smartMailOrg/
 - The application uses OAuth2 for secure authentication
 - Gmail access tokens are stored in server-side sessions
 
+### Secrets & security rotation
+
+- If a credential is accidentally committed (for example, the Google OAuth client JSON), treat it as compromised and rotate it immediately.
+- To rotate Google OAuth credentials:
+   1. Open Google Cloud Console → APIs & Services → Credentials. Delete or regenerate the OAuth Client Secret and create a new OAuth client if needed.
+ 2. Replace the secret in your local `.env` file (do not commit `.env` onto the repo).
+ 3. If you suspect user refresh tokens may be stolen, revoke them by removing the user's tokens from the `users` collection in MongoDB (if using Mongo) or by asking users to re-authenticate. See `database-mongo.js` to find where tokens are stored.
+- If a key was committed, remove it from repository history and push using an approved flow:
+   - Preferred: use `git filter-repo --invert-paths --path client_secret_...json` to remove the file from history. See https://github.com/newren/git-filter-repo.
+   - Alternative: `git filter-branch --index-filter "git rm --cached --ignore-unmatch client_secret_*.json" --prune-empty -- --all` (warning: history-rewriting tool).
+   - Force push the rewritten history: `git push --force --all` then `git push --force --tags` if needed.
+- If GitHub blocked your push due to secret scanning, follow the link in the push output to unblock the secret or visit repository Security → Push protection.
+- Add `client_secret_*.json` and any local secret files to `.gitignore` (already present), and store secrets in platform secret managers (GitHub Secrets, GCP Secret Manager) for CI and production.
+
 ## Troubleshooting
 
 ### Common Issues
